@@ -9,6 +9,10 @@ import spark.ModelAndView;
 import java.util.HashMap;
 import java.util.List;
 
+
+/**
+ * Class to handle operations in connection with the Product class.
+ */
 public class ProductController {
 
     public static ModelAndView renderAllProducts(Request req, Response res) {

@@ -5,6 +5,9 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.sql.Statement;
 
+/**
+ * Abstract class for handing database connections.
+ */
 public abstract class DBConnection {
 
     private static final String DATABASE = "jdbc:postgresql://localhost:5432/codecoolshop";

@@ -9,6 +9,10 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 
+
+/**
+ * Class to handle operations in connection with the Cart (Shopping cart) class.
+ */
 public class CartController extends DBConnection {
 
     public void checkCartDB(String userId, Integer productID) {

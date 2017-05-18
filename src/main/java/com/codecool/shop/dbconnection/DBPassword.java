@@ -4,6 +4,9 @@ import java.io.BufferedReader;
 import java.io.FileReader;
 import java.util.ArrayList;
 
+/**
+ * Class to handle database authentication from a file.
+ */
 public class DBPassword {
 
     public static ArrayList<String> readFile() {

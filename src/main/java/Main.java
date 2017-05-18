@@ -19,6 +19,11 @@ import java.util.HashMap;
 
 public class Main {
 
+    /**
+     * The main method of the Codecool Shop. It uses thymeleaf for templates and Spark as the web framework.
+     * @author team git rekt
+     * @version 1.0
+     */
     public static void main(String[] args) {
         // default server settings
         exception(Exception.class, (e, req, res) -> e.printStackTrace());
@@ -146,7 +151,6 @@ public class Main {
         });
 
         post("/register", (req, res) -> {
-
             String name = req.queryParams("name");
             String email = req.queryParams("email");
             String username = req.queryParams("username");
@@ -193,6 +197,9 @@ public class Main {
         enableDebugScreen();
     }
 
+    /**
+     * Method to add new products, product categories and suppliers to the database.
+     */
     private static void populateData() {
         ProductDao productDataStore = ProductDaoMem.getInstance();
         ProductCategoryDao productCategoryDataStore = ProductCategoryDaoMem.getInstance();

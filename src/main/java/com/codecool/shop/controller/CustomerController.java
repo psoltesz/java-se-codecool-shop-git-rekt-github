@@ -6,6 +6,9 @@ import java.sql.*;
 import java.util.UUID;
 
 
+/**
+ * Class to handle operations in connection with the Customer class.
+ */
 public class CustomerController extends DBConnection {
 
     public Boolean loginValidation(String login, String pw) {
