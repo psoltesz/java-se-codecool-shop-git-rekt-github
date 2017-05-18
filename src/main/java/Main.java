@@ -9,6 +9,8 @@ import com.codecool.shop.dao.*;
 import com.codecool.shop.dao.implementation.*;
 import com.codecool.shop.model.*;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import spark.Request;
 import spark.Response;
 import spark.template.thymeleaf.ThymeleafTemplateEngine;
@@ -19,6 +21,8 @@ import java.util.HashMap;
 
 public class Main {
 
+    private static final Logger logger = LoggerFactory.getLogger(Main.class);
+
     public static void main(String[] args) {
         // default server settings
         exception(Exception.class, (e, req, res) -> e.printStackTrace());
@@ -27,6 +31,7 @@ public class Main {
 
         // populate some data for the memory storage
         populateData();
+        logger.info("Populating data successful");
 
         // generating Supplier and Product category objects from the DB
         SupplierDaoJdbc suppliers = SupplierDaoJdbc.getInstance();
@@ -52,6 +57,7 @@ public class Main {
             String size = cart.getCartSize();
             String userId = req.session().attribute("currentUser");
             if (userId == null) {
+                logger.warn("user not logged in");
                 return "user is not logged in";
             } else {
                 cartController.checkCartDB(userId, productId);
@@ -62,6 +68,7 @@ public class Main {
         get("/addCartToOrder", (req, res) -> {
             String userId = req.session().attribute("currentUser");
             orderController.addCartToOrder(userId);
+            logger.info("cart content added with {} as userID", userId);
             return "success";
         });
 
@@ -73,6 +80,7 @@ public class Main {
         get("/getTotalPrice", (req, res) -> {
             String userID = req.session().attribute("currentUser");
             String cartTotalPrice = cartController.getTotalPrice(userID);
+            logger.debug(cartTotalPrice.toString());
             return ("Total: " + cartTotalPrice + " $");
         });
 
@@ -93,10 +101,10 @@ public class Main {
             HashMap<String, HashMap> cartContent = new HashMap<>();
             HashMap<String, String> totalPrice = new HashMap<>();
             totalPrice.put("totalPrice", cart.getTotalPrice());
-            System.out.println(totalPrice);
+            logger.debug("total price: " + totalPrice.toString());
             cartContent.put("cartContent", cart.getCartContent());
             cartContent.put("totalPrice", totalPrice);
-            System.out.println(cartContent);
+            logger.debug("content of card: " + cartContent.toString());
             return renderTemplate("product/checkout", cartContent);
         });
 
@@ -119,6 +127,7 @@ public class Main {
             Order order = Order.getInstance(name, email, phone, billing, shipping);
             order.updateCart(cart);
             res.redirect("/payment");
+            logger.info("payment complete, order updated with cartcontent");
             return "success";
         });
 
@@ -132,6 +141,7 @@ public class Main {
             Integer quantity = Integer.parseInt(req.queryParams("quantity"));
             String userID = req.session().attribute("currentUser");
             cartController.updateQuantityDB(userID, productName, quantity);
+            logger.info("cart content updated");
             return "success";
         });
 
@@ -152,7 +162,7 @@ public class Main {
             String username = req.queryParams("username");
             String password = req.queryParams("password");
             String address = req.queryParams("address");
-            String data = name + email + username + password + address;
+            logger.trace("user data for registration: " + name, email, username, password, address);
             customerController.registerUser(name, email, username, password, address);
 
             res.redirect("/");
@@ -167,9 +177,11 @@ public class Main {
             if (customerController.loginValidation(username, password)) {
                 req.session().attribute("currentUser", customerController.getUserId(username));
                 res.redirect("/");
+                logger.info("login successful");
                 return "login successful";
             }
             res.redirect("/login");
+            logger.warn("login failed");
             return "login failed";
         });
 
